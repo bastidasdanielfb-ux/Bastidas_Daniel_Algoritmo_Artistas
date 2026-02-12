@@ -23,7 +23,6 @@ body {
 }
 
 h1 {
-  margin: 10px 0;
   color: var(--purple);
 }
 
@@ -34,7 +33,6 @@ h1 {
 .grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: 1fr;
 }
 
 @media (min-width: 950px) {
@@ -51,9 +49,6 @@ h1 {
 }
 
 label {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 6px;
   color: var(--muted);
 }
 
@@ -61,21 +56,13 @@ select {
   width: 100%;
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid var(--border);
   background: var(--panel2);
-  color: var(--text);
-}
-
-.row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 14px;
+  color: white;
+  border: 1px solid var(--border);
 }
 
 button {
   cursor: pointer;
-  border: none;
   border-radius: 12px;
   padding: 10px 14px;
   font-weight: bold;
@@ -84,7 +71,7 @@ button {
 
 .primary {
   background: var(--purple);
-  color: #000;
+  color: black;
 }
 
 .primary:hover {
@@ -93,12 +80,8 @@ button {
 
 .ghost {
   background: var(--panel2);
-  color: var(--text);
+  color: white;
   border: 1px solid var(--border);
-}
-
-.ghost:hover {
-  border-color: var(--purple);
 }
 
 .danger {
@@ -106,17 +89,9 @@ button {
   color: white;
 }
 
-.question {
-  background: var(--panel2);
-  padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-}
-
 .duel {
   display: grid;
   gap: 14px;
-  grid-template-columns: 1fr;
 }
 
 @media (min-width: 900px) {
@@ -137,21 +112,18 @@ button {
   max-height: 220px;
   object-fit: cover;
   border-radius: 14px;
-  transition: transform 0.3s ease;
-}
-
-.pick:hover img {
-  transform: scale(1.05);
 }
 
 .pick h3 {
   margin-top: 10px;
+  color: white;   /* 👈 AQUÍ ESTÁ EL CAMBIO */
+  font-weight: 600;
 }
 
 .topbox {
   background: var(--panel2);
-  border-radius: 12px;
   padding: 10px;
+  border-radius: 12px;
 }
 
 .toprow {
@@ -163,13 +135,4 @@ button {
 
 .toprow:last-child {
   border-bottom: none;
-}
-
-.hint {
-  color: var(--muted);
-}
-
-.foot {
-  color: var(--muted);
-  padding-bottom: 30px;
 }
