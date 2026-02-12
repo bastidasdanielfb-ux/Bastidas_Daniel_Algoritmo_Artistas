@@ -1,34 +1,10 @@
 const artistas = [
-  {
-    nombre: "Bad Bunny",
-    generacion: "Nueva",
-    imagen: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Bad_Bunny_2019.jpg"
-  },
-  {
-    nombre: "Taylor Swift",
-    generacion: "Nueva",
-    imagen: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Taylor_Swift_2019.jpg"
-  },
-  {
-    nombre: "Billie Eilish",
-    generacion: "Nueva",
-    imagen: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Billie_Eilish_2019.jpg"
-  },
-  {
-    nombre: "Michael Jackson",
-    generacion: "Pasada",
-    imagen: "https://upload.wikimedia.org/wikipedia/commons/5/55/Michael_Jackson_1988.jpg"
-  },
-  {
-    nombre: "Madonna",
-    generacion: "Pasada",
-    imagen: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Madonna_2015.jpg"
-  },
-  {
-    nombre: "The Beatles",
-    generacion: "Pasada",
-    imagen: "https://upload.wikimedia.org/wikipedia/commons/d/df/The_Fabs.JPG"
-  }
+  { nombre: "Bad Bunny", generacion: "Nueva", imagen: "images/badbunny.jpg" },
+  { nombre: "Taylor Swift", generacion: "Nueva", imagen: "images/taylorswift.jpg" },
+  { nombre: "Billie Eilish", generacion: "Nueva", imagen: "images/billie.jpg" },
+  { nombre: "Michael Jackson", generacion: "Pasada", imagen: "images/mj.jpg" },
+  { nombre: "Madonna", generacion: "Pasada", imagen: "images/madonna.jpg" },
+  { nombre: "The Beatles", generacion: "Pasada", imagen: "images/beatles.jpg" }
 ];
 
 const segmentos = {
@@ -47,12 +23,12 @@ const contextos = {
 
 const RATING_INICIAL = 1000;
 const K = 32;
-const STORAGE_KEY = "impactogeneracional_v1";
+const STORAGE_KEY = "impactogeneracional_v2";
 
 function defaultState(){
   const buckets = {};
-  for (const seg of Object.keys(segmentos)){
-    for (const ctx of Object.keys(contextos)){
+  for (const seg in segmentos){
+    for (const ctx in contextos){
       const key = `${seg}__${ctx}`;
       buckets[key] = {};
       artistas.forEach(a => buckets[key][a.nombre] = RATING_INICIAL);
@@ -63,8 +39,7 @@ function defaultState(){
 
 function loadState(){
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return defaultState();
-  return JSON.parse(raw);
+  return raw ? JSON.parse(raw) : defaultState();
 }
 
 function saveState(){
@@ -82,11 +57,8 @@ function updateElo(bucket, a, b, winner){
   const ea = expectedScore(ra, rb);
   const eb = expectedScore(rb, ra);
 
-  const sa = winner === "A" ? 1 : 0;
-  const sb = winner === "B" ? 1 : 0;
-
-  bucket[a] = ra + K * (sa - ea);
-  bucket[b] = rb + K * (sb - eb);
+  bucket[a] = ra + K * ((winner === "A" ? 1 : 0) - ea);
+  bucket[b] = rb + K * ((winner === "B" ? 1 : 0) - eb);
 }
 
 function randomPair(){
@@ -98,44 +70,9 @@ function randomPair(){
   return [a, b];
 }
 
-function bucketKey(seg, ctx){
-  return `${seg}__${ctx}`;
-}
-
-function topN(bucket, n=10){
-  const arr = Object.entries(bucket).map(([nombre, rating]) => ({nombre, rating}));
-  arr.sort((a,b) => b.rating - a.rating);
-  return arr.slice(0, n);
-}
-
-const segmentSelect = document.getElementById("segmentSelect");
-const contextSelect = document.getElementById("contextSelect");
-const questionEl = document.getElementById("question");
-const btnA = document.getElementById("btnA");
-const btnB = document.getElementById("btnB");
-const topBox = document.getElementById("topBox");
-const btnNewPair = document.getElementById("btnNewPair");
-const btnReset = document.getElementById("btnReset");
-const btnShowTop = document.getElementById("btnShowTop");
-
-let currentA = null;
-let currentB = null;
-
-function fillSelect(select, obj){
-  for (const [k,v] of Object.entries(obj)){
-    const opt = document.createElement("option");
-    opt.value = k;
-    opt.textContent = v;
-    select.appendChild(opt);
-  }
-}
-
-fillSelect(segmentSelect, segmentos);
-fillSelect(contextSelect, contextos);
-
 function renderArtist(button, artista){
   button.innerHTML = `
-    <img src="${artista.imagen}">
+    <img src="${artista.imagen}" onerror="this.src='images/default.jpg'">
     <h3>${artista.nombre}</h3>
   `;
 }
@@ -144,13 +81,23 @@ function newDuel(){
   [currentA, currentB] = randomPair();
   renderArtist(btnA, currentA);
   renderArtist(btnB, currentB);
-  questionEl.textContent = contextos[contextSelect.value];
+  question.textContent = contextos[contextSelect.value];
+}
+
+function bucketKey(seg, ctx){
+  return `${seg}__${ctx}`;
+}
+
+function topN(bucket){
+  return Object.entries(bucket)
+    .map(([nombre, rating]) => ({nombre, rating}))
+    .sort((a,b)=>b.rating-a.rating)
+    .slice(0,10);
 }
 
 function renderTop(){
   const bucket = state.buckets[bucketKey(segmentSelect.value, contextSelect.value)];
   const top = topN(bucket);
-
   topBox.innerHTML = top.map((r,i)=>`
     <div class="toprow">
       <div><b>${i+1}.</b> ${r.nombre}</div>
@@ -167,8 +114,28 @@ function vote(winner){
   newDuel();
 }
 
-btnA.onclick = ()=> vote("A");
-btnB.onclick = ()=> vote("B");
+const segmentSelect = document.getElementById("segmentSelect");
+const contextSelect = document.getElementById("contextSelect");
+const btnA = document.getElementById("btnA");
+const btnB = document.getElementById("btnB");
+const btnNewPair = document.getElementById("btnNewPair");
+const btnReset = document.getElementById("btnReset");
+const btnShowTop = document.getElementById("btnShowTop");
+const topBox = document.getElementById("topBox");
+const question = document.getElementById("question");
+
+let currentA, currentB;
+
+for (const [k,v] of Object.entries(segmentos)){
+  segmentSelect.innerHTML += `<option value="${k}">${v}</option>`;
+}
+
+for (const [k,v] of Object.entries(contextos)){
+  contextSelect.innerHTML += `<option value="${k}">${v}</option>`;
+}
+
+btnA.onclick = ()=>vote("A");
+btnB.onclick = ()=>vote("B");
 btnNewPair.onclick = newDuel;
 btnShowTop.onclick = renderTop;
 
