@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ImpactoGeneracionalMash</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<header class="wrap">
+  <h1>🎤 ImpactoGeneracionalMash</h1>
+  <p class="sub">Comparación A/B + Ranking Elo para medir impacto social entre generaciones</p>
+</header>
+
+<main class="wrap grid">
+
+  <section class="card">
+    <h2>1) Configuración</h2>
+
+    <label>Generación del votante</label>
+    <select id="segmentSelect"></select>
+
+    <label>Tipo de impacto</label>
+    <select id="contextSelect"></select>
+
+    <div class="row">
+      <button id="btnNewPair" class="ghost">🔁 Nuevo duelo</button>
+      <button id="btnReset" class="danger">🧹 Reiniciar</button>
+    </div>
+
+    <p class="hint">Elige el artista con MAYOR impacto según el criterio seleccionado.</p>
+  </section>
+
+  <section class="card">
+    <h2>2) Vota</h2>
+    <p id="question" class="question">—</p>
+
+    <div class="duel">
+      <button id="btnA" class="pick"></button>
+      <button id="btnB" class="pick"></button>
+    </div>
+
+    <div class="row">
+      <button id="btnExport" class="ghost">⬇️ Exportar votos (CSV)</button>
+      <button id="btnShowTop" class="primary">🏆 Ver Top 10</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3) Ranking (Top 10)</h2>
+    <div id="topBox" class="topbox"></div>
+  </section>
+
+</main>
+
+<footer class="wrap foot">
+  <small>Algoritmo basado en comparación A/B + Sistema Elo</small>
+</footer>
+
+<script src="app.js"></script>
+
+</body>
+</html>
